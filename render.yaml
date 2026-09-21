@@ -1,0 +1,53 @@
+# SilentSOS — Render Blueprint (100% free tier: Docker web service)
+# Usage: push ONLY this folder to a fresh GitHub repo, then in Render:
+#   New +  ->  Blueprint  ->  select that repo  ->  Apply.
+# Paste your free Neon PostgreSQL connection string into DATABASE_URL
+# when Render asks for it.
+
+services:
+  - type: web
+    name: silentsos
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: ENV
+        value: prod
+      - key: SECRET_KEY
+        generateValue: true
+      # Paste your Neon connection string here when Render prompts:
+      #   postgresql://user:pass@ep-xxx.neon.tech/silentsos?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+      # Dashboard is served from the SAME origin by the API, so CORS only
+      # matters for external tools/devices. Replace with your final
+      # *.onrender.com URL after first deploy if needed.
+      - key: CORS_ORIGINS
+        value: https://silentsos.onrender.com
+      - key: ACCESS_TOKEN_MINUTES
+        value: "15"
+      - key: REFRESH_TOKEN_DAYS
+        value: "7"
+      - key: LOCKOUT_THRESHOLD
+        value: "5"
+      - key: LOCKOUT_MINUTES
+        value: "15"
+      - key: RATE_LIMIT_AUTH_PER_MIN
+        value: "10"
+      - key: RATE_LIMIT_API_PER_MIN
+        value: "120"
+      - key: MAX_BODY_BYTES
+        value: "262144"
+      - key: SMS_PROVIDER
+        value: sim
+      - key: SMS_WEBHOOK_SECRET
+        generateValue: true
+      - key: MQTT_ENABLED
+        value: "false"
+      - key: SEED_ADMIN_EMAIL
+        value: admin@silentsos.local
+      - key: SEED_ADMIN_PASSWORD
+        generateValue: true

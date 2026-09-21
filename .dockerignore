@@ -1,0 +1,7 @@
+# Keep the Docker build context tiny
+*
+!requirements.txt
+!app
+!dist
+**/__pycache__
+**/*.pyc
